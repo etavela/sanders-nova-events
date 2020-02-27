@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import csv
+from datetime import datetime
 import json
 import logging
 import requests
@@ -62,10 +63,13 @@ def get_nova_events(all_events):
 
 def to_export(event):
     properties = event.get('properties')
+    starts_at = properties.get('starts_at')
+    starts_at_datetime = datetime.fromisoformat(starts_at.strip('Z'))
     return {
         'id': properties.get('id'),
         'title': properties.get('title'),
-        'starts_at': properties.get('starts_at'),
+        'date': starts_at_datetime.strftime('%Y-%m-%d'),
+        'time': starts_at_datetime.strftime('%I:%M %p'),
         'address1': properties.get('address1'),
         'address2': properties.get('address2'),
         'city': properties.get('city'),
@@ -88,7 +92,7 @@ try:
     all_events = response_dict.get('features')
     nova_events = get_nova_events(all_events)
     with open('nova-events.csv', 'w', newline='') as csv_file:
-        fieldnames = ['id', 'title', 'starts_at', 'address1', 'address2', 'city', 'state', 'zip', 'attendee_count', 'max_attendees', 'link_url']
+        fieldnames = ['id', 'title', 'date', 'time', 'address1', 'address2', 'city', 'state', 'zip', 'attendee_count', 'max_attendees', 'link_url']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for event in nova_events:
