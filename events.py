@@ -71,6 +71,8 @@ def to_export(event):
         'city': properties.get('city'),
         'state': properties.get('state'),
         'zip': properties.get('zip'),
+        'attendee_count': properties.get('attendee_count'),
+        'max_attendees': properties.get('max_attendees'),
         'link_url': properties.get('link_url'),
     }
 
@@ -86,7 +88,7 @@ try:
     all_events = response_dict.get('features')
     nova_events = get_nova_events(all_events)
     with open('nova-events.csv', 'w', newline='') as csv_file:
-        fieldnames = ['id', 'title', 'starts_at', 'address1', 'address2', 'city', 'state', 'zip', 'link_url']
+        fieldnames = ['id', 'title', 'starts_at', 'address1', 'address2', 'city', 'state', 'zip', 'attendee_count', 'max_attendees', 'link_url']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for event in nova_events:
